@@ -10,11 +10,12 @@ export type DynamicFormProps = {
   values: FormValues;
   errors: FormErrors;
   onChange: (name: string, value: FieldValue) => void;
+  onFocus?: (name: string) => void;
   onBlur: (name: string) => void;
 };
 
 /** Renders one field per visible config entry, in the layout that fits the window width. */
-export function DynamicForm({ config, values, errors, onChange, onBlur }: DynamicFormProps) {
+export function DynamicForm({ config, values, errors, onChange, onFocus, onBlur }: DynamicFormProps) {
   const isRegular = useIsRegularWidth();
 
   const items = config
@@ -28,6 +29,7 @@ export function DynamicForm({ config, values, errors, onChange, onBlur }: Dynami
           value={values[field.name]}
           error={errors[field.name]}
           onChange={onChange}
+          onFocus={onFocus}
           onBlur={onBlur}
         />
       ),

@@ -8,12 +8,13 @@ type ControlProps = {
   value: FieldValue;
   invalid: boolean;
   onChange: (value: FieldValue) => void;
+  onFocus: () => void;
   onBlur: () => void;
 };
 
 /** Maps a config `type` to an atom. Adding a field type means adding an entry here. */
 const controls: Record<FieldType, (props: ControlProps) => ReactElement> = {
-  text: ({ field, value, invalid, onChange, onBlur }) => (
+  text: ({ field, value, invalid, onChange, onFocus, onBlur }) => (
     <TextInput
       value={String(value)}
       label={field.label}
@@ -21,10 +22,11 @@ const controls: Record<FieldType, (props: ControlProps) => ReactElement> = {
       inputMode={field.inputMode}
       invalid={invalid}
       onChangeText={onChange}
+      onFocus={onFocus}
       onBlur={onBlur}
     />
   ),
-  email: ({ field, value, invalid, onChange, onBlur }) => (
+  email: ({ field, value, invalid, onChange, onFocus, onBlur }) => (
     <TextInput
       value={String(value)}
       label={field.label}
@@ -35,10 +37,11 @@ const controls: Record<FieldType, (props: ControlProps) => ReactElement> = {
       autoComplete="email"
       invalid={invalid}
       onChangeText={onChange}
+      onFocus={onFocus}
       onBlur={onBlur}
     />
   ),
-  textarea: ({ field, value, invalid, onChange, onBlur }) => (
+  textarea: ({ field, value, invalid, onChange, onFocus, onBlur }) => (
     <TextInput
       multiline
       value={String(value)}
@@ -46,6 +49,7 @@ const controls: Record<FieldType, (props: ControlProps) => ReactElement> = {
       placeholder={field.placeholder}
       invalid={invalid}
       onChangeText={onChange}
+      onFocus={onFocus}
       onBlur={onBlur}
     />
   ),
@@ -70,10 +74,11 @@ export type FormFieldProps = {
   value: FieldValue;
   error?: string;
   onChange: (name: string, value: FieldValue) => void;
+  onFocus?: (name: string) => void;
   onBlur: (name: string) => void;
 };
 
-export function FormField({ field, value, error, onChange, onBlur }: FormFieldProps) {
+export function FormField({ field, value, error, onChange, onFocus, onBlur }: FormFieldProps) {
   // A checkbox draws its own label next to the box.
   const showFieldLabel = field.type !== 'checkbox';
 
@@ -89,6 +94,7 @@ export function FormField({ field, value, error, onChange, onBlur }: FormFieldPr
         value,
         invalid: Boolean(error),
         onChange: (next) => onChange(field.name, next),
+        onFocus: () => onFocus?.(field.name),
         onBlur: () => onBlur(field.name),
       })}
     </Field>

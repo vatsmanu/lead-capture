@@ -10,3 +10,4 @@ export type {
   Validations,
 } from './types';
 export { isFieldVisible } from './visibility';
+export { useKeyboardAwareScroll } from './useKeyboardAwareScroll';

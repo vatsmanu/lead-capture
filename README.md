@@ -71,7 +71,7 @@ Adding a field means adding an entry to `leadFormConfig.ts`. Adding a new contro
 
 Two `half` fields share a row, a `full` field takes its own row. Hidden fields are removed before rows are built, so Company name appearing or disappearing re-flows the rows.
 
-The keyboard is handled by the `ScrollView` (`automaticallyAdjustKeyboardInsets`, `keyboardShouldPersistTaps="handled"`), which scrolls the focused field above the keyboard. The Submit button is the last item in the scroll content, so it is always reachable. Safe-area insets come from `SafeAreaView` (`react-native-safe-area-context`).
+The keyboard is handled by `src/form/useKeyboardAwareScroll.ts`. It adds bottom padding while the keyboard is open and scrolls the focused input, including the tall Notes box, fully above the keyboard. `ScrollView` uses `keyboardShouldPersistTaps="handled"`. The Submit button is the last item in the scroll content, so it is always reachable. Safe-area insets come from `SafeAreaView` (`react-native-safe-area-context`).
 
 ## Validation behaviour
 

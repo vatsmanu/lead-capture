@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, type ScrollViewInstance } from 'react-native';
+import { Keyboard, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button, breakpoints, colors, radius, spacing, typography } from '../../design-system';
@@ -7,6 +7,7 @@ import {
   buildInitialValues,
   DynamicForm,
   isFieldVisible,
+  useKeyboardAwareScroll,
   type FieldConfig,
   type FieldValue,
   type FormErrors,
@@ -35,7 +36,7 @@ const initialValues = buildInitialValues(leadFormConfig);
 export function LeadScreen() {
   // The ref always holds the latest values, so a blur fired in the same event as a change reads fresh data.
   const valuesRef = useRef<FormValues>(initialValues);
-  const scrollRef = useRef<ScrollViewInstance>(null);
+  const { scrollRef, keyboardInset, scrollFocusedIntoView, scrollProps } = useKeyboardAwareScroll();
 
   const [values, setValues] = useState<FormValues>(initialValues);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -65,6 +66,11 @@ export function LeadScreen() {
     });
   };
 
+  const handleFocus = () => {
+    // Wait a frame so the newly focused input is registered as focused.
+    requestAnimationFrame(scrollFocusedIntoView);
+  };
+
   const handleBlur = (name: string) => {
     const field = leadFormConfig.find((entry) => entry.name === name);
     if (!field) return;
@@ -89,6 +95,11 @@ export function LeadScreen() {
     }
 
     setSubmitFailed(false);
+    // The result card keeps a copy of the values, so the form itself can be cleared.
+    valuesRef.current = initialValues;
+    setValues(initialValues);
+    setErrors({});
+    Keyboard.dismiss();
     setSubmitted(
       leadFormConfig
         .filter((field) => isFieldVisible(field, current))
@@ -108,10 +119,10 @@ export function LeadScreen() {
       <ScrollView
         ref={scrollRef}
         style={styles.scroll}
-        contentContainerStyle={styles.content}
+        {...scrollProps}
+        contentContainerStyle={[styles.content, { paddingBottom: spacing.xxl + keyboardInset }]}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
-        automaticallyAdjustKeyboardInsets
       >
         <View style={styles.column}>
           <Text style={styles.title} accessibilityRole="header">
@@ -136,6 +147,7 @@ export function LeadScreen() {
               values={values}
               errors={errors}
               onChange={handleChange}
+              onFocus={handleFocus}
               onBlur={handleBlur}
             />
           </View>
@@ -164,7 +176,6 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     padding: spacing.lg,
-    paddingBottom: spacing.xxl,
   },
   column: {
     width: '100%',
