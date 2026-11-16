@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "andr",
-    "slug": "andr",
+    "name": "Lead Capture",
+    "slug": "lead-capture",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
